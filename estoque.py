@@ -45,36 +45,27 @@ def alterar_quantidade():
     if not estoque:
         print("\nErro: Nenhum material cadastrado ainda.")
         return
+    try:
+        codigo = int(input("Informe o código do material que deseja alterar a quantidade: "))
+        if codigo in estoque:
+            material = estoque[codigo]
 
-    busca = input(
-        "Informe o código do material que deseja alterar a quantidade: "
-    ).strip()
-    if not busca.isdigit():
-        print("Erro: Informe um código válido (número).")
-        return
-    codigo = int(busca)
-
-    if codigo in estoque:
-        material = estoque[codigo]
-
-        print(
-            f"Quantidade atual de {material['nome']} (COD: {codigo}): {material['quantidade']} peças."
-        )
-        while True:
-            try:
-                nova_quantidade = int(
-                    input(f"Informe a nova quantidade de {material['nome']}: ")
-                )
-                if nova_quantidade > 0 and nova_quantidade < 5000:
-                    material["quantidade"] = nova_quantidade
-                    print("Quantidade alterada com sucesso.")
-                    break
-                else:
-                    print("Erro: Quantidade inválida.")
-            except ValueError:
-                print("Erro: Informe apenas números.")
-    else:
-        print(f"Erro: Código '{codigo}' não encontrado no estoque.")
+            print(f"Quantidade atual de {material['nome']} (COD: {codigo}): {material['quantidade']} peças.")
+            while True:
+                try:
+                    nova_quantidade = int(input(f"Informe a nova quantidade de {material['nome']}: "))
+                    if nova_quantidade > 0 and nova_quantidade < 5000:
+                        material["quantidade"] = nova_quantidade
+                        print("Quantidade alterada com sucesso.")
+                        break
+                    else:
+                        print("Erro: Quantidade inválida.")
+                except ValueError:
+                    print("Erro: Informe apenas números.")
+        else:
+            print(f"Erro: Código '{codigo}' não encontrado no estoque.")
+    except ValueError:
+        print("Erro: Código inválido.")
 
 
 def excluir_material():
@@ -93,11 +84,7 @@ def excluir_material():
     if codigo in estoque:
         material = estoque[codigo]
         confirmacao = (
-            input(
-                f"Tem certeza que deseja excluir '{material['nome']} (COD: {codigo})? (s/n): "
-            )
-            .strip()
-            .lower()
+            input(f"Tem certeza que deseja excluir '{material['nome']}' (COD: {codigo})? (s/n): ").strip().lower()
         )
 
         if confirmacao == "s":
