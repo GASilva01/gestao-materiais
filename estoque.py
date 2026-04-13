@@ -77,16 +77,49 @@ def alterar_quantidade():
         print(f"Erro: Código '{codigo}' não encontrado no estoque.")
 
 
+def excluir_material():
+    if not estoque:
+        print("\nErro: Nenhum material cadastrado ainda.")
+        return
+
+    busca = input("Informe o código do material que deseja excluir: ").strip()
+
+    if not busca.isdigit():
+        print("Erro: Informe um código válido (número).")
+        return
+
+    codigo = int(busca)
+
+    if codigo in estoque:
+        material = estoque[codigo]
+        confirmacao = (
+            input(
+                f"Tem certeza que deseja excluir '{material['nome']} (COD: {codigo})? (s/n): "
+            )
+            .strip()
+            .lower()
+        )
+
+        if confirmacao == "s":
+            del estoque[codigo]
+            print("Material excluído.")
+        else:
+            print("Operação cancelada.")
+    else:
+        print(f"Erro: Código '{codigo}' não encontrado no estoque.")
+
+
 while True:
     print(
         "\n--- Gestão de Materiais ---"
         "\n\n1. Cadastrar material."
         "\n2. Visão geral do estoque."
         "\n3. Alterar quantidade de materiais."
-        "\n4. Sair.\n"
+        "\n4. Excluir material."
+        "\n5. Sair.\n"
     )
     opcao = input("Escolha uma opção: ")
-    if opcao == "4":
+    if opcao == "5":
         print("Encerrando o sistema...")
         break
     elif opcao == "1":
@@ -95,5 +128,7 @@ while True:
         visualizar_estoque_geral()
     elif opcao == "3":
         alterar_quantidade()
+    elif opcao == "4":
+        excluir_material()
     else:
         print("Erro: Opção invalida.")
