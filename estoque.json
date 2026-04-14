@@ -1,0 +1,12 @@
+{
+    "1000": {
+        "nome": "Parafuso",
+        "quantidade": 125,
+        "unidade": "Pc"
+    },
+    "1001": {
+        "nome": "Porca",
+        "quantidade": 200,
+        "unidade": "Pc"
+    }
+}
