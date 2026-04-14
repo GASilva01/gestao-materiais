@@ -1,12 +1,39 @@
+import json
+
 estoque = {}
 proximo_id = 1000
+
+
+def salvar_estoque():
+    with open("estoque.json", "w", encoding="utf-8") as arquivo:
+        json.dump(estoque, arquivo, ensure_ascii=False, indent=4)
+
+
+def carregar_estoque():
+    global estoque, proximo_id
+    try:
+        with open("estoque.json", "r", encoding="utf-8") as arquivo:
+            dados = json.load(arquivo)
+
+            estoque = {}
+            for chave, valor in dados.items():
+                chave_inteira = int(chave)
+                estoque[chave_inteira] = valor
+
+            if estoque:
+                proximo_id = max(estoque.keys()) + 1  # estoque.keys retorna os codigos existentes,
+    #                                                    # max() pega o maior existente
+    #                                                    # +1 garante que o proximo codigo cadastrado será novo
+    #                                                    # keys é função nativa que retorna as chaves de um dicionario
+    except (FileNotFoundError, json.JSONDecodeError):
+        estoque = {}  # se o estoque nao existir, aqui ele é criado
 
 
 def cadastrar_item():
     global proximo_id
 
     while True:
-        nome = input("Informe o nome do material: ").strip().lower()
+        nome = input("Informe o nome do material: ").strip().capitalize()
         if nome == "":
             print("Erro: Nome inválido.")
         else:
@@ -18,8 +45,8 @@ def cadastrar_item():
             if quantidade > 0 and quantidade < 5000:
                 codigo = proximo_id
                 estoque[codigo] = {"nome": nome, "quantidade": quantidade}
-
                 print(f"\nCadastro realizado com sucesso. Código do material: {codigo}")
+                salvar_estoque()
                 proximo_id += 1
                 break
             else:
@@ -57,6 +84,7 @@ def alterar_quantidade():
                     if nova_quantidade > 0 and nova_quantidade < 5000:
                         material["quantidade"] = nova_quantidade
                         print("Quantidade alterada com sucesso.")
+                        salvar_estoque()
                         break
                     else:
                         print("Erro: Quantidade inválida.")
@@ -90,12 +118,14 @@ def excluir_material():
         if confirmacao == "s":
             del estoque[codigo]
             print("Material excluído.")
+            salvar_estoque()
         else:
             print("Operação cancelada.")
     else:
         print(f"Erro: Código '{codigo}' não encontrado no estoque.")
 
 
+carregar_estoque()
 while True:
     print(
         "\n--- Gestão de Materiais ---"
