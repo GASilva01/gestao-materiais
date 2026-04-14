@@ -38,13 +38,26 @@ def cadastrar_item():
             print("Erro: Nome inválido.")
         else:
             break
+    unidades = {"1": "Pc", "2": "Kg", "3": "Lt"}
+    while True:
+        print("\n--- Unidades de medida ---")
+        for chave, valor in unidades.items():
+            print(f"{chave}. {valor}")
+
+        opcao = input(f"Informe a unidade de medida para o material {nome}: ")
+
+        if opcao in unidades:
+            un = unidades[opcao]
+            break
+        else:
+            print("Opção inválida")
 
     while True:
         try:
             quantidade = int(input(f"Informe a quantidade de {nome}: "))
             if quantidade > 0 and quantidade < 5000:
                 codigo = proximo_id
-                estoque[codigo] = {"nome": nome, "quantidade": quantidade}
+                estoque[codigo] = {"nome": nome, "quantidade": quantidade, "unidade": un}
                 print(f"\nCadastro realizado com sucesso. Código do material: {codigo}")
                 salvar_estoque()
                 proximo_id += 1
@@ -61,10 +74,10 @@ def visualizar_estoque_geral():
         return
 
     print(f"\n{'='*21} VISÃO GERAL {'='*21}")
-    print(f"{'Código':<10} | {'Material':<20} | {'Quantidade':<20}")
+    print(f"{'Código':<10} | {'Material':<20} | {'Quantidade':<10} | {'Unidade':<5} ")
     print("-" * 55)
     for codigo, dados in estoque.items():
-        print(f"{codigo:<10} | {dados['nome']:<20} | {dados['quantidade']:<20}")
+        print(f"{codigo:<10} | {dados['nome']:<20} | {dados['quantidade']:<10} | {dados['unidade']:<5}")
     print("-" * 55)
 
 
