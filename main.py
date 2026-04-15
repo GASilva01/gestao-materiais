@@ -15,18 +15,17 @@ def carregar_estoque():
         with open("estoque.json", "r", encoding="utf-8") as arquivo:
             dados = json.load(arquivo)
 
-            estoque = {}
             for chave, valor in dados.items():
                 chave_inteira = int(chave)
                 estoque[chave_inteira] = valor
 
-            if estoque:
+            if estoque:  # verifica se o dicionario está vazio, se estiver vazio pula, se estiver cheio, faz o passo abaixo
                 proximo_id = max(estoque.keys()) + 1  # estoque.keys retorna os codigos existentes,
     #                                                    # max() pega o maior existente
     #                                                    # +1 garante que o proximo codigo cadastrado será novo
-    #                                                    # keys é função nativa que retorna as chaves de um dicionario
+    #                                                    # keys é um método que retorna as chaves de um dicionario
     except (FileNotFoundError, json.JSONDecodeError):
-        estoque = {}  # se o estoque nao existir, aqui ele é criado
+        estoque = {}  # se o estoque global nao existir, aqui ele é criado (hipotetico)
 
 
 def cadastrar_item():
@@ -38,7 +37,8 @@ def cadastrar_item():
             print("Erro: Nome inválido.")
         else:
             break
-    unidades = {"1": "Pc", "2": "Kg", "3": "Lt"}
+
+    unidades = {"1": "Pc", "2": "Kg", "3": "Lt", "4": "M"}
     while True:
         print("\n--- Unidades de medida ---")
         for chave, valor in unidades.items():
@@ -69,7 +69,7 @@ def cadastrar_item():
 
 
 def visualizar_estoque_geral():
-    if not estoque:
+    if not estoque:  # se o dicionario estiver vazio
         print("\nErro: Nenhum material cadastrado ainda.")
         return
 
@@ -82,7 +82,7 @@ def visualizar_estoque_geral():
 
 
 def alterar_quantidade():
-    if not estoque:
+    if not estoque:  # se o dicionario estiver vazio
         print("\nErro: Nenhum material cadastrado ainda.")
         return
     try:
@@ -90,7 +90,7 @@ def alterar_quantidade():
         if codigo in estoque:
             material = estoque[codigo]
 
-            print(f"Quantidade atual de {material['nome']} (COD: {codigo}): {material['quantidade']} peças.")
+            print(f"Quantidade atual de {material['nome']} (COD: {codigo}): {material['quantidade']} {material['unidade']}.")
             while True:
                 try:
                     nova_quantidade = int(input(f"Informe a nova quantidade de {material['nome']}: "))
@@ -110,32 +110,27 @@ def alterar_quantidade():
 
 
 def excluir_material():
-    if not estoque:
+    if not estoque:  # se o dicionario estiver vazio
         print("\nErro: Nenhum material cadastrado ainda.")
         return
 
-    busca = input("Informe o código do material que deseja excluir: ").strip()
+    try:
+        codigo = int(input("Informe o código do material que deseja excluir: ").strip())
 
-    if not busca.isdigit():
-        print("Erro: Informe um código válido (número).")
-        return
+        if codigo in estoque:
+            material = estoque[codigo]
+            confirmacao = input(f"Tem certeza que deseja excluir '{material['nome']}' (COD: {codigo})? (s/n): ").strip().lower()
 
-    codigo = int(busca)
-
-    if codigo in estoque:
-        material = estoque[codigo]
-        confirmacao = (
-            input(f"Tem certeza que deseja excluir '{material['nome']}' (COD: {codigo})? (s/n): ").strip().lower()
-        )
-
-        if confirmacao == "s":
-            del estoque[codigo]
-            print("Material excluído.")
-            salvar_estoque()
+            if confirmacao == "s":
+                del estoque[codigo]
+                print("Material excluído.")
+                salvar_estoque()
+            else:
+                print("Operação cancelada.")
         else:
-            print("Operação cancelada.")
-    else:
-        print(f"Erro: Código '{codigo}' não encontrado no estoque.")
+            print(f"Erro: Código '{codigo}' não encontrado no estoque.")
+    except ValueError:
+        print("Erro: Informe um código válido (número).")
 
 
 carregar_estoque()
